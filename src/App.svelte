@@ -1,30 +1,50 @@
-<script>
-	export let name;
+<script lang="ts">
+  import { onMount } from "svelte";
+  import Canvas1 from "./components/Canvas1.svelte";
+
+  const src = "assets/i027.jpg";
+  const width = 600;
+  const height = 400;
+  let image: HTMLImageElement;
+
+  onMount(async () => {
+    image = await loadImage(src);
+  });
+  
+  async function loadImage(imagePath: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.src = imagePath;
+      image.addEventListener("load", () => {
+        resolve(image);
+      });
+      image.addEventListener("error", (err) => {
+        reject(err);
+      });
+    });
+  }
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+  <div>
+    <img alt="some dumb pic" {src} {width} {height} />
+  </div>
+  {#if image}
+    <Canvas1 {image} />
+  {/if}
 </main>
 
 <style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
+  main {
+    text-align: center;
+    padding: 1em;
+    max-width: 240px;
+    margin: 0 auto;
+  }
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
+  @media (min-width: 640px) {
+    main {
+      max-width: none;
+    }
+  }
 </style>
