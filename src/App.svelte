@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import Canvas1 from "./components/Canvas1.svelte";
 
-  const src = "assets/i027.jpg";
+  const src = "assets/overview2.jpg";
   const width = 600;
   const height = 400;
   let image: HTMLImageElement;
@@ -10,7 +10,7 @@
   onMount(async () => {
     image = await loadImage(src);
   });
-  
+
   async function loadImage(imagePath: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
       const image = new Image();
