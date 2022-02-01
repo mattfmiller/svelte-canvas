@@ -9,7 +9,7 @@
   let canvas1: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
   let brightness = 0;
-  let imageData;
+  let imageData: ImageData;
 
   onMount(() => {
     ctx = canvas1.getContext("2d")!;
@@ -20,8 +20,8 @@
   function handleBrightness() {
     const adjust = Math.floor(255 * (brightness / 100));
     ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, width, height);
-    // const imageData = ctx.getImageData(0, 0, width, height);
-    const data = imageData.data;
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const data = [...imageData.data];
     for (var i = 0; i < data.length; i += 4) {
       data[i] += adjust; // red
       data[i + 1] += adjust; // green
@@ -32,6 +32,7 @@
 
   function invert() {
     ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, width, height);
+    const imageData = ctx.getImageData(0, 0, width, height);
     const data = imageData.data;
     for (var i = 0; i < data.length; i += 4) {
       data[i] = 255 - data[i]; // red
