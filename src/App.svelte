@@ -3,8 +3,8 @@
   import Canvas1 from "./components/Canvas1.svelte";
 
   const src = "assets/overview.jpg";
-  const width = 600;
-  const height = 400;
+  const width = 900;
+  const height = 600;
   let image: HTMLImageElement;
 
   onMount(async () => {
