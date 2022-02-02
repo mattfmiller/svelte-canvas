@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import Slider from "./Slider.svelte";
 
   export let image: HTMLImageElement;
 
@@ -18,7 +19,8 @@
     originalImageData = ctx.getImageData(0, 0, width, height);
   });
 
-  function handleBrightness() {
+  function handleBrightness(value) {
+    brightness = value;
     applyFilters();
   }
 
@@ -64,24 +66,7 @@
   <div>
     <button on:click={invert}>invert</button>
   </div>
-  <div class="flex">
-    <span>brightness</span>
-    <input
-      bind:value={brightness}
-      type="range"
-      min="-100"
-      max="100"
-      class="slider"
-      on:change={applyFilters}
-    />
-    <input
-      value={brightness}
-      type="number"
-      min="-100"
-      max="100"
-      on:change={applyFilters}
-    />
-  </div>
+  <Slider name="brigtness" callback={handleBrightness} />
 </div>
 
 <style>
@@ -89,7 +74,7 @@
     border: 1px solid black;
     background-color: darkgray;
   }
-  .flex {
+  /* .flex {
     display: "flex";
-  }
+  } */
 </style>
