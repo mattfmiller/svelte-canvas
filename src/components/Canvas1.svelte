@@ -171,7 +171,7 @@
 
   // refactor loops? Needs refinement?
   function applySharpen(data: Uint8ClampedArray, w: number, h: number) {
-    const adjust = sharpen / 100;
+    const adjust = sharpen / 100 / 2;
     const weights = [
       0,
       -adjust,
