@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import Canvas1 from "./components/Canvas1.svelte";
 
-  const src = "assets/overview.jpg";
+  const src = "assets/neg2.jpg";
   const width = 900;
   const height = 600;
   let image: HTMLImageElement;
