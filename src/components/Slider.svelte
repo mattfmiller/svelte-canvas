@@ -5,7 +5,6 @@
   let value: number = 0;
 
   const handleChange = (v) => {
-    console.log(value);
     callback(value);
   };
 </script>

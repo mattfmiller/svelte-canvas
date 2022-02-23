@@ -12,7 +12,7 @@
   let brightness = 0;
   let exposure = 0;
   let contrast = 0;
-  let colorTemperture = 0;
+  let colorTemperature = 0;
   let tint = 0;
   let saturation = 0;
   let vibrance = 0;
@@ -41,8 +41,8 @@
     applyFilters();
   }
 
-  function handleColorTemperture(value) {
-    colorTemperture = value;
+  function handleColorTemperature(value) {
+    colorTemperature = value;
     applyFilters();
   }
 
@@ -115,6 +115,7 @@
   // }
 
   // alternate filter
+  // use curves eventually?
   function applyContrast(data: Uint8ClampedArray) {
     const adjust = contrast / 100 + 1; //convert to decimal & shift range: [0..2];
     const intercept = 128 * (1 - adjust);
@@ -126,8 +127,8 @@
     return data;
   }
 
-  function applyColorTemperture(data: Uint8ClampedArray) {
-    const adjust = colorTemperture;
+  function applyColorTemperature(data: Uint8ClampedArray) {
+    const adjust = colorTemperature;
     for (let i = 0; i < data.length; i += 4) {
       data[i] += adjust; // red
       data[i + 2] -= adjust; // blue
@@ -154,6 +155,7 @@
     return data;
   }
 
+  // weak?
   function applyVibrance(data: Uint8ClampedArray) {
     const adjust = -1 * vibrance;
     for (let i = 0; i < data.length; i += 4) {
@@ -167,7 +169,7 @@
     return data;
   }
 
-  // refactor loops?
+  // refactor loops? Needs refinement?
   function applySharpen(data: Uint8ClampedArray, w: number, h: number) {
     const adjust = sharpen / 100;
     const weights = [
@@ -224,7 +226,7 @@
     data = applyBrightness(data);
     data = applyExposure(data);
     data = applyContrast(data);
-    data = applyColorTemperture(data);
+    data = applyColorTemperature(data);
     data = applyTint(data);
     data = applySaturation(data);
     data = applyVibrance(data);
@@ -239,10 +241,10 @@
   <div>
     <button on:click={invert}>invert</button>
   </div>
-  <Slider name="brigtness" callback={handleBrightness} />
+  <Slider name="brightness" callback={handleBrightness} />
   <Slider name="exposure" callback={handleExposure} />
   <Slider name="contrast" callback={handleContrast} />
-  <Slider name="temperture" callback={handleColorTemperture} />
+  <Slider name="temperature" callback={handleColorTemperature} />
   <Slider name="tint" callback={handleTint} />
   <Slider name="vibrance" callback={handleVibrance} />
   <Slider name="saturation" callback={handleSaturation} />
