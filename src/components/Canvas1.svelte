@@ -19,12 +19,18 @@
   let sharpen = 0;
   let originalImageData: ImageData;
   let shouldInvert: boolean;
+  let shouldCorrectColors: boolean;
 
   onMount(() => {
     ctx = canvas1.getContext("2d")!;
     ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, width, height);
     originalImageData = ctx.getImageData(0, 0, width, height);
   });
+
+  function nonZeroMin(numbers: number[]): number {
+    const nonZeroNumbers = [...new Set(numbers.filter((n) => n > 0))];
+    return Math.min(...nonZeroNumbers);
+  }
 
   function handleBrightness(value) {
     brightness = value;
@@ -71,12 +77,49 @@
     applyFilters();
   }
 
+  function correctColors() {
+    shouldCorrectColors = !shouldCorrectColors;
+    applyFilters();
+  }
+
   function applyInvert(data: Uint8ClampedArray) {
     for (let i = 0; i < data.length; i += 4) {
       data[i] = 255 - data[i]; // red
       data[i + 1] = 255 - data[i + 1]; // green
       data[i + 2] = 255 - data[i + 2]; // blue
     }
+    return data;
+  }
+
+  function applyColorCorrection(data: Uint8ClampedArray) {
+    const redData: number[] = [];
+    const greenData: number[] = [];
+    const blueData: number[] = [];
+    for (let i = 0; i < data.length; i += 4) {
+      redData.push(data[i]); // red
+      greenData.push(data[i + 1]); // green
+      blueData.push(data[i + 2]); // blue
+    }
+
+    const minRed = nonZeroMin(redData);
+    const minGreen = nonZeroMin(greenData);
+    const minBlue = nonZeroMin(blueData);
+    const maxRed = Math.max(...[...new Set(redData)]);
+    const maxGreen = Math.max(...[...new Set(greenData)]);
+    const maxBlue = Math.max(...[...new Set(blueData)]);
+    const redSlope = 255 / (maxRed - minRed);
+    const greenSlope = 255 / (maxGreen - minGreen);
+    const blueSlope = 255 / (maxBlue - minBlue);
+    const redIntercept = -1 * redSlope * minRed;
+    const greenIntercept = -1 * greenSlope * minGreen;
+    const blueIntercept = -1 * blueSlope * minBlue;
+
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = redSlope * data[i] + redIntercept; // red
+      data[i + 1] = greenSlope * data[i + 1] + greenIntercept; // green
+      data[i + 2] = blueSlope * data[i + 2] + blueIntercept; // blue
+    }
+
     return data;
   }
 
@@ -223,6 +266,9 @@
     if (shouldInvert) {
       data = applyInvert(data);
     }
+    if (shouldCorrectColors) {
+      data = applyColorCorrection(data);
+    }
     data = applyBrightness(data);
     data = applyExposure(data);
     data = applyContrast(data);
@@ -240,6 +286,7 @@
   <canvas bind:this={canvas1} {width} {height} />
   <div>
     <button on:click={invert}>invert</button>
+    <button on:click={correctColors}>normalize colors</button>
   </div>
   <Slider name="brightness" callback={handleBrightness} />
   <Slider name="exposure" callback={handleExposure} />
